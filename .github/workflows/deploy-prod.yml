@@ -54,10 +54,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            docker rm -f woorimap-prod
-            docker-compose pull
-            docker-compose up -d
-            docker image prune -f
+            sh ./deploy.sh
 
       - name: Slack alarm
         uses: 8398a7/action-slack@v3
