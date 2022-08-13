@@ -1,4 +1,4 @@
-name: Deploy develop env
+name: Deploy Core develop env
 
 on:
   push:
@@ -8,8 +8,13 @@ on:
 permissions:
   contents: read
 
+defaults:
+  run:
+    working-directory: ./woorimap-image
+
 jobs:
-  DEV-CD:
+  build:
+    if: ${{ github.event.label.name == 'image' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -42,8 +47,8 @@ jobs:
       - name: Docker build & push to dev
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -f Dockerfile-dev -t ${{ secrets.DOCKER_REPO }}/woorimap-dev .
-          docker push ${{ secrets.DOCKER_REPO }}/woorimap-dev
+          docker build -f Dockerfile-dev -t ${{ secrets.DOCKER_REPO }}/woorimap-image .
+          docker push ${{ secrets.DOCKER_REPO }}/woorimap-image
 
       ## deploy to develop
       - name: Deploy to dev
@@ -55,9 +60,9 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            docker rm -f woorimap-dev
-            docker-compose pull
-            docker-compose up -d
+            docker rm -f woorimap-image
+            docker-compose pull image
+            docker-compose up -d image
             docker image prune -f
 
       - name: Slack alarm
