@@ -1,2 +1,2 @@
 rootProject.name = 'woorimap'
-include 'woorimap-image', 'woorimap-notification'
+include 'woorimap-core', 'woorimap-image', 'woorimap-notification'
