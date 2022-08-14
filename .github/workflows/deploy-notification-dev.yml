@@ -41,13 +41,13 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew clean woorimap-notification:build
 
       ## docker build & push to develop
       - name: Docker build & push to dev
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -f Dockerfile-dev -t ${{ secrets.DOCKER_REPO }}/woorimap-notification .
+          docker build -f ./woorimap-notification/Dockerfile -t ${{ secrets.DOCKER_REPO }}/woorimap-notification ./woorimap-notification
           docker push ${{ secrets.DOCKER_REPO }}/woorimap-notification
 
       ## deploy to develop

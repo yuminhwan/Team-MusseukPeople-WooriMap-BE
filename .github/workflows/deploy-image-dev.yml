@@ -41,13 +41,13 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew clean woorimap-image:build
 
       ## docker build & push to develop
       - name: Docker build & push to dev
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -f Dockerfile-dev -t ${{ secrets.DOCKER_REPO }}/woorimap-image .
+          docker build -f ./woorimap-image/Dockerfile -t ${{ secrets.DOCKER_REPO }}/woorimap-image ./woorimap-image
           docker push ${{ secrets.DOCKER_REPO }}/woorimap-image
 
       ## deploy to develop
