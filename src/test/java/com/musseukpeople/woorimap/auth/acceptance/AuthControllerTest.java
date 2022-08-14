@@ -3,6 +3,7 @@ package com.musseukpeople.woorimap.auth.acceptance;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 
 import java.io.IOException;
 
@@ -18,6 +19,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.musseukpeople.woorimap.auth.application.dto.request.SignInRequest;
 import com.musseukpeople.woorimap.auth.application.dto.response.AccessTokenResponse;
+import com.musseukpeople.woorimap.auth.domain.login.LoginMember;
 import com.musseukpeople.woorimap.auth.presentation.dto.response.LoginResponse;
 import com.musseukpeople.woorimap.common.exception.ErrorResponse;
 import com.musseukpeople.woorimap.member.application.dto.request.SignupRequest;
@@ -161,6 +163,27 @@ class AuthControllerTest extends AcceptanceTest {
 
         // then
         토큰_재발급_실패(response);
+    }
+
+    @DisplayName("LoginMember 객체 반환 성공")
+    @Test
+    void getLoginMember_success() throws Exception {
+        // given
+        String accessToken = 로그인_토큰(new SignInRequest("woorimap@gmail.com", "!Hwan123"));
+
+        // when
+        MockHttpServletResponse response = mockMvc.perform(get("/api/auth/login/members")
+                .content(MediaType.APPLICATION_JSON_VALUE)
+                .header(HttpHeaders.AUTHORIZATION, accessToken))
+            .andDo(print())
+            .andReturn().getResponse();
+
+        // then
+        LoginMember loginMember = getResponseObject(response, LoginMember.class);
+        assertAll(
+            () -> assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value()),
+            () -> assertThat(loginMember.getId()).isPositive()
+        );
     }
 
     private MockHttpServletResponse 로그아웃(String accessToken) throws Exception {
